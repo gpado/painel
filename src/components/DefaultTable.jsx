@@ -15,10 +15,13 @@ import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import Checkbox from "@mui/material/Checkbox";
 import IconButton from "@mui/material/IconButton";
+import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import DeleteIcon from "@mui/icons-material/Delete";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
 import { visuallyHidden } from "@mui/utils";
 
 function descendingComparator(a, b, orderBy) {
@@ -120,7 +123,12 @@ EnhancedTableHead.propTypes = {
   rowCount: PropTypes.number.isRequired
 };
 
-function EnhancedTableToolbar({ numSelected }) {
+function EnhancedTableToolbar({
+  numSelected,
+  onToggleFilterDialog,
+  onToggleDeleteDialog,
+  onToggleSubmitDialog
+}) {
   return (
     <Toolbar
       sx={{
@@ -148,16 +156,21 @@ function EnhancedTableToolbar({ numSelected }) {
 
       {numSelected > 0 ? (
         <Tooltip title="Delete">
-          <IconButton>
+          <IconButton onClick={onToggleDeleteDialog}>
             <DeleteIcon />
           </IconButton>
         </Tooltip>
       ) : (
-        <Tooltip title="Filter list">
-          <IconButton>
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>
+        <>
+          <Tooltip title="Filter list">
+            <IconButton onClick={onToggleFilterDialog}>
+              <FilterListIcon />
+            </IconButton>
+          </Tooltip>
+          <Button variant="contained" onClick={onToggleSubmitDialog}>
+            Cadastrar
+          </Button>
+        </>
       )}
     </Toolbar>
   );
@@ -167,12 +180,57 @@ EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired
 };
 
+const RowOptionsMenu = ({ options }) => {
+  const [anchorElRowOptions, setAnchorElRowOptions] = React.useState(null);
+
+  const handleToggleRowOptionsMenu = (event) => {
+    setAnchorElRowOptions(
+      anchorElRowOptions === null ? event.currentTarget : null
+    );
+  };
+
+  return (
+    <Box sx={{ flexGrow: 0 }}>
+      <Tooltip title="Open settings">
+        <IconButton onClick={handleToggleRowOptionsMenu}>
+          <MoreHorizIcon fontSize="medium" />
+        </IconButton>
+      </Tooltip>
+      <Menu
+        sx={{ mt: "45px" }}
+        id="menu-appbar"
+        anchorEl={anchorElRowOptions}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "left"
+        }}
+        keepMounted
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "left"
+        }}
+        open={Boolean(anchorElRowOptions)}
+        onClose={handleToggleRowOptionsMenu}
+      >
+        {options.map((option) => (
+          <MenuItem key={option.id} onClick={option.action}>
+            <Typography textAlign="left">{option.label}</Typography>
+          </MenuItem>
+        ))}
+      </Menu>
+    </Box>
+  );
+};
+
 export default function TesteTable({
   selectRow,
   organizedData,
   headers,
   numberOfPages,
   numberOfRows,
+  onToggleFilterDialog,
+  onToggleSubmitDialog,
+  onToggleDeleteDialog,
   rowOptions
 }) {
   const [order, setOrder] = React.useState("asc");
@@ -244,7 +302,12 @@ export default function TesteTable({
   return (
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ p: 3, width: "100%", mb: 2 }}>
-        <EnhancedTableToolbar numSelected={selected.length} />
+        <EnhancedTableToolbar
+          numSelected={selected.length}
+          onToggleFilterDialog={onToggleFilterDialog}
+          onToggleSubmitDialog={onToggleSubmitDialog}
+          onToggleDeleteDialog={onToggleDeleteDialog}
+        />
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
@@ -296,9 +359,7 @@ export default function TesteTable({
                     <TableCell>{row.telefone}</TableCell>
                     <TableCell>{row.tipo}</TableCell>
                     <TableCell align="center">
-                      <IconButton>
-                        <MoreHorizIcon fontSize="medium" />
-                      </IconButton>
+                      <RowOptionsMenu options={rowOptions} />
                     </TableCell>
                   </TableRow>
                 );
