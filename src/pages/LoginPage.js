@@ -10,7 +10,6 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useKeycloak } from '@react-keycloak/web';
 
 function DireitosAutorais(props) {
   return (
@@ -28,13 +27,13 @@ function DireitosAutorais(props) {
 const temaPadrao = createTheme();
 
 export default function Entrar() {
-  const { keycloak, initialized } = useKeycloak();
-
-  const handleLogin = (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
-    if (keycloak) {
-      keycloak.login();
-    }
+    const data = new FormData(event.currentTarget);
+    console.log({
+      email: data.get('email'),
+      password: data.get('senha'),
+    });
   };
 
   return (
@@ -55,7 +54,7 @@ export default function Entrar() {
           <Typography component="h1" variant="h5">
             Entrar
           </Typography>
-          <Box component="form" noValidate sx={{ mt: 1 }}>
+          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required
@@ -81,11 +80,10 @@ export default function Entrar() {
               label="Lembrar"
             />
             <Button
-              type="button"
+              type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
-              onClick={handleLogin}
             >
               Entrar
             </Button>
