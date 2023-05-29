@@ -40,7 +40,7 @@ export default function Entrar() {
       password: data.get('senha'),
     });
 
-    navigate("/dashboard");
+    navigate("/usuarios");
   };
 
   return (
