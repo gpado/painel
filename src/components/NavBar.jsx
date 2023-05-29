@@ -121,7 +121,7 @@ function NavBar() {
               variant="h6"
               noWrap
               component="a"
-              href="/"
+              href="#"
               sx={{
                 mr: 2,
                 display: "flex",
@@ -132,7 +132,7 @@ function NavBar() {
                 textDecoration: "none"
               }}
             >
-              LOGO
+              Conesp - Seguros
             </Typography>
           </Box>
 

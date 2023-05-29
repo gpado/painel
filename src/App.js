@@ -3,13 +3,12 @@ import { keycloak } from './utils/auth.ts';
 import React from 'react';
 import { ReactKeycloakProvider } from '@react-keycloak/web';
 import Login from './pages/Login.jsx';
-import Dashboard from './pages/consultUsers/dashboard.js';
-
+import ConsultUsers from "./pages/ConsultUsers/ConsultUsers";
 
 function App() {
   return (
     <React.StrictMode>
-      <Dashboard />
+      <ConsultUsers />
       {/* <ReactKeycloakProvider authClient={keycloak}>
         <Login />
       </ReactKeycloakProvider> */}

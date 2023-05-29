@@ -24,6 +24,8 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { visuallyHidden } from "@mui/utils";
 
+import SearchInput from "./SearchInput";
+
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -40,10 +42,6 @@ function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-// Since 2020 all major browsers ensure sort stability with Array.prototype.sort().
-// stableSort() brings sort stability to non-modern browsers (notably IE11). If you
-// only support modern browsers you can replace stableSort(exampleArray, exampleComparator)
-// with exampleArray.slice().sort(exampleComparator)
 function stableSort(array, comparator) {
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
@@ -162,14 +160,20 @@ function EnhancedTableToolbar({
         </Tooltip>
       ) : (
         <>
-          <Tooltip title="Filter list">
-            <IconButton onClick={onToggleFilterDialog}>
-              <FilterListIcon />
-            </IconButton>
+          <Box sx={{ flex: "1 1 100%" }}>
+            <SearchInput label="Pesquisar" id="txbSearchUsers" />
+            <Tooltip title="Filter list">
+              <IconButton onClick={onToggleFilterDialog}>
+                <FilterListIcon />
+              </IconButton>
+            </Tooltip>
+          </Box>
+
+          <Tooltip title="Submit button">
+            <Button variant="contained" onClick={onToggleSubmitDialog}>
+              Cadastrar
+            </Button>
           </Tooltip>
-          <Button variant="contained" onClick={onToggleSubmitDialog}>
-            Cadastrar
-          </Button>
         </>
       )}
     </Toolbar>
