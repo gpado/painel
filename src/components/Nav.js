@@ -33,8 +33,8 @@ const Nav = () => {
                       className="text-blue-800"
                       onClick={() => {
                         const redirectUri = window.location.host.includes("localhost")
-                          ? "http://localhost:3000"
-                          : "https://icy-bush-018950510.3.azurestaticapps.net";
+                          ? "http://localhost:3000/usuarios"
+                          : "https://icy-bush-018950510.3.azurestaticapps.net/usuarios";
                         keycloak.login({ redirectUri });
                       }}
                     >
