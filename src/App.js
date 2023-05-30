@@ -1,30 +1,26 @@
 import React from "react";
-import { ReactKeycloakProvider } from "@react-keycloak/web";
+import { ReactKeycloakProvider, useKeycloak } from "@react-keycloak/web";
 import keycloak from "./Keycloak";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Nav from "./components/Nav";
-import WelcomePage from "./pages/Homepage";
-import SecuredPage from "./pages/Securedpage";
-import PrivateRoute from "./helpers/PrivateRoute";
+import AppRouter from "./AppRouter";
+
+const LoadingKeycloak = () => (
+  <div>
+    <h1>Carregando...</h1>
+    <p>Isso deve levar apenas alguns instantes {";)"}</p>
+  </div>
+);
 
 function App() {
  return (
-  <ReactKeycloakProvider authClient={keycloak}>
+  <ReactKeycloakProvider 
+    authClient={keycloak}
+    LoadingComponent={<LoadingKeycloak />}
+    >
     <React.StrictMode>
       <Nav />
-      <BrowserRouter>
-        <Routes>
-          <Route exact path="/" element={<WelcomePage />} />
-          <Route
-            path="/secured"
-            element={
-              <PrivateRoute>
-                <SecuredPage />
-              </PrivateRoute>
-            }
-          />
-        </Routes>
-      </BrowserRouter>
+      <AppRouter />
     </React.StrictMode>
   </ReactKeycloakProvider>
  );

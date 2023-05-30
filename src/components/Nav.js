@@ -31,7 +31,7 @@ const Nav = () => {
                    <button
                      type="button"
                      className="text-blue-800"
-                     onClick={() => keycloak.login()}
+                     onClick={() => keycloak.login({redirectUri: "https://icy-bush-018950510.3.azurestaticapps.net/secured"})}
                    >
                      Login
                    </button>
