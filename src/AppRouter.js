@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import WelcomePage from "./pages/Homepage";
 import SecuredPage from "./pages/Securedpage";
 import PrivateRoute from "./helpers/PrivateRoute";
+import ConsultUsers from "./pages/ConsultUsers";
 
 const TestePage = () => (
     <div>
@@ -27,6 +28,14 @@ const AppRouter = () => {
                   element={
                     <PrivateRoute>
                       <SecuredPage />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/usuarios"
+                  element={
+                    <PrivateRoute>
+                      <ConsultUsers />
                     </PrivateRoute>
                   }
                 />
