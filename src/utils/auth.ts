@@ -1,14 +1,11 @@
-import Keycloak, { KeycloakInitOptions } from 'keycloak-js';
+import Keycloak from 'keycloak-js';
 
-// @ts-ignore
-const keycloakConfig = JSON.parse(process.env.REACT_APP_KEYCLOAK_JSON);
-export const keycloak = new Keycloak({
-    url: keycloakConfig['auth-server-url'],
-    realm: keycloakConfig['realm'],
-    clientId: keycloakConfig['resource']
-})
-
-// login-required | check-sso
-export const keycloakProviderInitConfig: KeycloakInitOptions = {
-    onLoad: "check-sso"
+const keycloakConfig = {
+  url: 'https://keycloack-godigital.azurewebsites.net/auth', // URL do servidor Keycloak
+  realm: 'conesp', // Nome do realm no Keycloak
+  clientId: 'painel-react', // Nome do cliente para sua aplicação React
 };
+
+const keycloak = new Keycloak(keycloakConfig);
+
+export default keycloak;

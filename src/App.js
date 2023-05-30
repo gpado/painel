@@ -1,21 +1,33 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import LoginPage from './pages/LoginPage';
-import CssBaseline from '@mui/material/CssBaseline';
-import Dashboard from './pages/Dashboard';
+import React from "react";
+import { ReactKeycloakProvider } from "@react-keycloak/web";
+import keycloak from "./Keycloak";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Nav from "./components/Nav";
+import WelcomePage from "./pages/Homepage";
+import SecuredPage from "./pages/Securedpage";
+import PrivateRoute from "./helpers/PrivateRoute";
 
-const App = () => {
-  return (
-    <div>
-      <CssBaseline />
-      <Router>
-        <Routes>
-          <Route path="/" element={<LoginPage />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-        </Routes>
-      </Router>
-    </div>
-  );
+function App() {
+ return (
+   <div>
+     <ReactKeycloakProvider authClient={keycloak}>
+       <Nav />
+       <BrowserRouter>
+         <Routes>
+           <Route exact path="/" element={<WelcomePage />} />
+           <Route
+             path="/secured"
+             element={
+               <PrivateRoute>
+                 <SecuredPage />
+               </PrivateRoute>
+             }
+           />
+         </Routes>
+       </BrowserRouter>
+     </ReactKeycloakProvider>
+   </div>
+ );
 }
 
 export default App;
