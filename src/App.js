@@ -9,24 +9,24 @@ import PrivateRoute from "./helpers/PrivateRoute";
 
 function App() {
  return (
-   <div>
-     <ReactKeycloakProvider authClient={keycloak}>
-       <Nav />
-       <BrowserRouter>
-         <Routes>
-           <Route exact path="/" element={<WelcomePage />} />
-           <Route
-             path="/secured"
-             element={
-               <PrivateRoute>
-                 <SecuredPage />
-               </PrivateRoute>
-             }
-           />
-         </Routes>
-       </BrowserRouter>
-     </ReactKeycloakProvider>
-   </div>
+  <ReactKeycloakProvider authClient={keycloak}>
+    <React.StrictMode>
+      <Nav />
+      <BrowserRouter>
+        <Routes>
+          <Route exact path="/" element={<WelcomePage />} />
+          <Route
+            path="/secured"
+            element={
+              <PrivateRoute>
+                <SecuredPage />
+              </PrivateRoute>
+            }
+          />
+        </Routes>
+      </BrowserRouter>
+    </React.StrictMode>
+  </ReactKeycloakProvider>
  );
 }
 
