@@ -2,7 +2,9 @@ import React from "react";
 import { useKeycloak } from "@react-keycloak/web";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import WelcomePage from "./pages/Homepage";
-import SecuredPage from "./pages/Dashboard";
+import SecuredPage from "./pages/Securedpage";
+import PrivateRoute from "./helpers/PrivateRoute";
+import ConsultUsers from "./pages/ConsultUsers";
 
 const TestePage = () => (
     <div>
@@ -21,7 +23,22 @@ const AppRouter = () => {
               <Routes>
                 <Route exact path="/teste" element={<TestePage />} />
                 <Route exact path="/" element={<WelcomePage />} />
-                <Route path="/secured" element={<SecuredPage />} />
+                <Route
+                  path="/secured"
+                  element={
+                    <PrivateRoute>
+                      <SecuredPage />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/usuarios"
+                  element={
+                    <PrivateRoute>
+                      <ConsultUsers />
+                    </PrivateRoute>
+                  }
+                />
               </Routes>
             </BrowserRouter>
           )}
