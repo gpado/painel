@@ -34,7 +34,7 @@ const Nav = () => {
                       onClick={() => {
                         const redirectUri = window.location.host.includes("localhost")
                           ? "http://localhost:3000/usuarios"
-                          : "https://icy-bush-018950510.3.azurestaticapps.net/usuarios";
+                          : "https://icy-bush-018950510.3.azurestaticapps.net";
                         keycloak.login({ redirectUri });
                       }}
                     >
