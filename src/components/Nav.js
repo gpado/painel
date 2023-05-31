@@ -2,7 +2,7 @@ import React from "react";
 import { useKeycloak } from "@react-keycloak/web";
 
 const Nav = () => {
- const { keycloak, initialized } = useKeycloak();
+ const { keycloak } = useKeycloak();
 
  return (
    <div>
@@ -25,29 +25,39 @@ const Nav = () => {
                  </a>
                </li>
              </ul>
-             <div className="hidden xl:flex items-center space-x-5">
-               <div className="hover:text-gray-200">
-                 {!keycloak.authenticated && (
-                   <button
-                     type="button"
-                     className="text-blue-800"
-                     onClick={() => keycloak.login()}
-                   >
-                     Login
-                   </button>
-                 )}
+              <div className="hidden xl:flex items-center space-x-5">
+                <div className="hover:text-gray-200">
+                  {!keycloak.authenticated && (
+                    <button
+                      type="button"
+                      className="text-blue-800"
+                      onClick={() => {
+                        const redirectUri = window.location.host.includes("localhost")
+                          ? "http://localhost:3000/usuarios"
+                          : "https://icy-bush-018950510.3.azurestaticapps.net/usuarios";
+                        keycloak.login({ redirectUri });
+                      }}
+                    >
+                      Login
+                    </button>
+                  )}
 
-                 {!!keycloak.authenticated && (
-                   <button
-                     type="button"
-                     className="text-blue-800"
-                     onClick={() => keycloak.logout()}
-                   >
-                     Logout ({keycloak.tokenParsed.preferred_username})
-                   </button>
-                 )}
-               </div>
-             </div>
+                  {!!keycloak.authenticated && (
+                    <button
+                      type="button"
+                      className="text-blue-800"
+                      onClick={() => {
+                        const redirectUri = window.location.host.includes("localhost")
+                          ? "http://localhost:3000"
+                          : "https://icy-bush-018950510.3.azurestaticapps.net";
+                        keycloak.logout({ redirectUri });
+                      }}
+                    >
+                      Logout ({keycloak.tokenParsed.preferred_username})
+                    </button>
+                  )}
+                </div>
+              </div>
            </div>
          </nav>
        </section>
