@@ -11,7 +11,14 @@ const TestePage = () => (
       <h1>Teste Page</h1>
       <p>Well, this route works...</p>
     </div>
-  );
+);
+
+const routes = [
+  { path: "/teste", element: <TestePage />, isPrivate: false },
+  { path: "/", element: <WelcomePage />, isPrivate: false },
+  { path: "/secured", element: <SecuredPage />, isPrivate: true },
+  { path: "/usuarios", element: <ConsultUsers />, isPrivate: true },
+];
 
 const AppRouter = () => {
     const { initialized } = useKeycloak();
@@ -21,24 +28,13 @@ const AppRouter = () => {
         {initialized && (
             <BrowserRouter>
               <Routes>
-                <Route exact path="/teste" element={<TestePage />} />
-                <Route exact path="/" element={<WelcomePage />} />
-                <Route
-                  path="/secured"
-                  element={
-                    <PrivateRoute>
-                      <SecuredPage />
-                    </PrivateRoute>
-                  }
-                />
-                <Route
-                  path="/usuarios"
-                  element={
-                    <PrivateRoute>
-                      <ConsultUsers />
-                    </PrivateRoute>
-                  }
-                />
+                {routes.map(({path, element, isPrivate}) => (
+                  <Route 
+                    key={path} 
+                    path={path} 
+                    element={isPrivate ? <PrivateRoute>{element}</PrivateRoute> : element} 
+                  />
+                ))}
               </Routes>
             </BrowserRouter>
           )}
