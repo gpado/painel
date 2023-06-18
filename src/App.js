@@ -1,7 +1,6 @@
 import React from "react";
-import { ReactKeycloakProvider, useKeycloak } from "@react-keycloak/web";
+import { ReactKeycloakProvider } from "@react-keycloak/web";
 import keycloak from "./Keycloak";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Nav from "./components/Nav";
 import AppRouter from "./AppRouter";
 
@@ -12,18 +11,16 @@ const LoadingKeycloak = () => (
   </div>
 );
 
-function App() {
- return (
+const App = () => (
   <ReactKeycloakProvider 
     authClient={keycloak}
     LoadingComponent={<LoadingKeycloak />}
-    >
+  >
     <React.StrictMode>
       <Nav />
       <AppRouter />
     </React.StrictMode>
   </ReactKeycloakProvider>
- );
-}
+);
 
 export default App;
