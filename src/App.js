@@ -1,26 +1,25 @@
-import React from "react";
-import { ReactKeycloakProvider } from "@react-keycloak/web";
-import keycloak from "./Keycloak";
-import Nav from "./components/Nav";
-import AppRouter from "./AppRouter";
+import logo from './logo.svg';
+import './App.css';
 
-const LoadingKeycloak = () => (
-  <div>
-    <h1>Carregando...</h1>
-    <p>Isso deve levar apenas alguns instantes {";)"}</p>
-  </div>
-);
-
-const App = () => (
-  <ReactKeycloakProvider 
-    authClient={keycloak}
-    LoadingComponent={<LoadingKeycloak />}
-  >
-    <React.StrictMode>
-      <Nav />
-      <AppRouter />
-    </React.StrictMode>
-  </ReactKeycloakProvider>
-);
+function App() {
+  return (
+    <div className="App">
+      <header className="App-header">
+        <img src={logo} className="App-logo" alt="logo" />
+        <p>
+          Edit <code>src/App.js</code> and save to reload.
+        </p>
+        <a
+          className="App-link"
+          href="https://reactjs.org"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Learn React
+        </a>
+      </header>
+    </div>
+  );
+}
 
 export default App;

@@ -1,8 +1,0 @@
-{
-    "realm": "conesp",
-    "auth-server-url": "https://keycloack-godigital.azurewebsites.net/auth",
-    "ssl-required": "external",
-    "resource": "react",
-    "public-client": true,
-    "confidential-port": 0
-}
