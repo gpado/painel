@@ -1,7 +1,8 @@
 import React from "react";
-import { ReactKeycloakProvider } from "@react-keycloak/web";
-import keycloak from "./Keycloak";
-import Nav from "./components/Nav";
+import { BrowserRouter } from "react-router-dom";
+// import { ReactKeycloakProvider } from "@react-keycloak/web";
+// import keycloak from "./Keycloak";
+import NavBar from "./components/NavBar";
 import AppRouter from "./AppRouter";
 
 const LoadingKeycloak = () => (
@@ -12,15 +13,15 @@ const LoadingKeycloak = () => (
 );
 
 const App = () => (
-  <ReactKeycloakProvider 
-    authClient={keycloak}
-    LoadingComponent={<LoadingKeycloak />}
-  >
-    <React.StrictMode>
-      <Nav />
-      <AppRouter />
-    </React.StrictMode>
-  </ReactKeycloakProvider>
+  <BrowserRouter>//React.StrictMode
+    <NavBar />
+    <AppRouter />
+  </BrowserRouter>
+  // <ReactKeycloakProvider 
+  //   authClient={keycloak}
+  //   LoadingComponent={<LoadingKeycloak />}
+  // >
+  // </ReactKeycloakProvider>
 );
 
 export default App;

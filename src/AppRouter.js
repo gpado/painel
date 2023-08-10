@@ -1,10 +1,11 @@
 import React from "react";
-import { useKeycloak } from "@react-keycloak/web";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+// import { useKeycloak } from "@react-keycloak/web";
+import { Route, Routes } from "react-router-dom";
 import WelcomePage from "./pages/Homepage";
 import SecuredPage from "./pages/Securedpage";
-import PrivateRoute from "./helpers/PrivateRoute";
+// import PrivateRoute from "./helpers/PrivateRoute";
 import ConsultUsers from "./pages/ConsultUsers";
+import Contracts from "./pages/Contracts";
 
 const TestePage = () => (
     <div>
@@ -18,26 +19,28 @@ const routes = [
   { path: "/", element: <WelcomePage />, isPrivate: false },
   { path: "/secured", element: <SecuredPage />, isPrivate: true },
   { path: "/usuarios", element: <ConsultUsers />, isPrivate: true },
+  { path: "/contratos", element: <Contracts />, isPrivate: true },
 ];
 
 const AppRouter = () => {
-    const { initialized } = useKeycloak();
+    // const { initialized } = useKeycloak();
 
     return(
         <>
-        {initialized && (
-            <BrowserRouter>
+            
               <Routes>
                 {routes.map(({path, element, isPrivate}) => (
                   <Route 
                     key={path} 
                     path={path} 
-                    element={isPrivate ? <PrivateRoute>{element}</PrivateRoute> : element} 
+                    element={element}
+                    // element={isPrivate ? <PrivateRoute>{element}</PrivateRoute> : element} 
                   />
                 ))}
               </Routes>
-            </BrowserRouter>
-          )}
+
+        {/* {initialized && (
+          )} */}
         </>
     );
 }

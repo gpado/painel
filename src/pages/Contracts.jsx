@@ -8,6 +8,8 @@ import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
 
+import dayjs, { DayJS } from 'dayjs';
+
 import TabView from "../components/TabView";
 import NavBar from "../components/NavBar";
 import DefaultTable from "../components/DefaultTable";
@@ -18,60 +20,17 @@ import AlertPopUp from "../components/AlertPopUp";
 
 import customTheme from "../theme.js";
 
-import ControllerEmployees from "../utils/ControllerEmployees.js";
-import ControllerCustomers from "../utils/ControllerCustomers.js";
+import ControllerContracts from "../utils/ControllerContracts.js";
 
 import ControllerHistory from "../utils/ControllerBrowserHistory.js";
 
-const userInputElements = [    
-  { id: "id", type: "text", label: "Id", columns: 7, state: null },
-  { id: "firstName", type: "text", label: "Nome", columns: 7, state: null },
-  { id: "secondName", type: "text", label: "Sobrenome", columns: 7, state: null },
-  { id: "email", type: "email", label: "E-mail", columns: 7, state: null }
-];
-
 const employeeInputElements = [
   { id: "id", type: "pk", label: "Id", columns: 3, state: null },
-  { id: "firstName", type: "pk", label: "Nome", columns: 7, state: null },
-  { id: "secondName", type: "text", label: "Sobrenome", columns: 7, state: null },
-  { id: "email", type: "email", label: "E-mail", columns: 7, state: null }
+  { id: "expiration", type: "date", label: "Dt. Expiração", columns: 7, state: null },
+  { id: "cnpj", type: "text", label: "CNPJ Cliente", columns: 7, state: null },
+  { id: "insurancePolicyId", type: "number", label: "Nº da Apólice", columns: 7, state: null },
+  { id: "customerId", type: "number", label: "Id Cliente", columns: 7, state: null }
 ];
-
-const customerInputElements = [
-  { id: "id", type: "pk", label: "Id", columns:3, state: null },
-  { id: "cnpj", type: "text", label: "CNPJ", columns:10, state: null },
-  { 
-	id: "state", 
-	type: "select", 
-	label: "Estado", 
-	columns: 4, 
-	state: null,
-	options: [
-		"AC", "AL", "AP", "AM", "BA", "CE",
-		"DF", "ES", "GO", "MA", "MT", "MS", 
-		"MG", "PA", "PB", "PR", "PE", "PI", 
-		"RJ", "RN", "RS", "RO", "RR", "SC",
-		"SP", "SE", "TO"],
-  },
-  { id: "contractId", type: "text", label: "Contrato", columns: 7, state: null },
-];
-const clientInputElements = {
-  id: "UF",
-  type: "select",
-  label: "Estado",
-  columns: 4,
-  options: ["AC", "AL", "AP", "AM", "BA", "CE",
-            "DF", "ES", "GO", "MA", "MT", "MS", 
-            "MG", "PA", "PB", "PR", "PE", "PI", 
-            "RJ", "RN", "RS", "RO", "RR", "SC", ""],
-  state: null
-};
-const funcInputElements = {
-  id: "dtNasc",
-  type: "date",
-  label: "Dt. Nascimento",
-  columns: 6
-};
 
 const getStateValues = (stateObject) => {
 	const statesValues = {};
@@ -84,14 +43,27 @@ const getStateValues = (stateObject) => {
 
 const connectStateElement = (element, stateValue, stateFunction) => {
 
-    element.onChange = (event) => {
-      console.log(`Changing ${event.target.id}`);
+	if(element.type === "date"){
+		
+		element.onChange = (newState) => {
+			stateFunction(newState);
+			
+			console.log(`oldValue: ${stateValue}`);
+			console.log(`oldState: ${newState}`);
+		}
+		
+		element.value = dayjs(stateValue);
+	}else{
+		element.onChange = (event) => {
+		console.log(`Changing ${event.target.id}`);
 
-      const newValue = event.target.value;
-      stateFunction(newValue);
-    };
-
-    element.value = stateValue;
+		const newValue = event.target.value;
+		stateFunction(newValue);
+		}
+		
+		element.value = stateValue;
+	}
+    
   }
 
 function Copyright(props) {
@@ -113,38 +85,24 @@ function Copyright(props) {
 }
 
 const FilterDialog = (props) => {
-  const filterInputElements = [
-    userInputElements[3],
-    clientInputElements,
-    funcInputElements
-  ];
+  const filterInputElements = [];
 
   return <FormDialog {...props} inputElements={filterInputElements} />;
 };
 
 const SubmitDialog = (props) => {
-  const employeeStates = {
-	  firstName: React.useState(),
-	  lastName: React.useState(),
-	  emailId: React.useState()
-  }
-  const customerStates = {
+  const contractStates = {
+	  expiration: React.useState(new Date()),
 	  cnpj: React.useState(),
-	  state: React.useState(""),
-	  contractId: React.useState()
+	  insurancePolicyId: React.useState(),
+	  customerId: React.useState()
   }
   
-  const employeeSubmitElements = employeeInputElements.slice(1);
-  const customerSubmitElements = customerInputElements.slice(1);
+  const contractSubmitElements = employeeInputElements.slice(1);
   
-  employeeSubmitElements.forEach((element, index) => {
-	  const currentState = Object.values(employeeStates)[index];
+  contractSubmitElements.forEach((element, index) => {
+	  const currentState = Object.values(contractStates)[index];
 	  
-	  connectStateElement(element, currentState[0], currentState[1]);
-  });
-  
-  customerSubmitElements.forEach((element, index) => {
-	  const currentState = Object.values(customerStates)[index];
 	  connectStateElement(element, currentState[0], currentState[1]);
   });
 
@@ -152,57 +110,32 @@ const SubmitDialog = (props) => {
 	props.onClose();
     props.onLoading();
 	
-	Object.values(employeeStates).forEach(state => state[1](''));
-	Object.values(customerStates).forEach(state => state[1](''));
+	Object.values(contractStates).forEach(state => state[1](''));
 	
-  	  if(props.tabSelected === 0){
-		  const employeeValues = getStateValues(employeeStates);
+	const employeeValues = getStateValues(contractStates);
 		  
-		  console.log(
-			ControllerEmployees.create(employeeValues, props.onSubmitSuccess, props.onSubmitError)
-		  );
-	  }
-		
-	  else{
-		  const customerValues = getStateValues(customerStates);
-		  
-		  console.log(
-			ControllerCustomers.create(customerValues, props.onSubmitSuccess, props.onSubmitError)
-		);
-	  }
+	console.log(
+		ControllerContracts.create(employeeValues, props.onSubmitSuccess, props.onSubmitError)
+	);
   }
 
-  const submitInputElements = (props.tabSelected === 0 ? employeeSubmitElements : customerSubmitElements);
-
-  return <FormDialog {...props} inputElements={submitInputElements} onSubmit={onSubmit} />;
+  return <FormDialog {...props} inputElements={contractSubmitElements} onSubmit={onSubmit} />;
 };
 
-const EditDialog = (props) => { /*ADD ControllerBrowser.getQueryParam('id')*/
-	const employeeStates = {
+const EditDialog = (props) => {
+	const contractStates = {
 		id: React.useState(),
-		firstName: React.useState(),
-		lastName: React.useState(),
-		emailId: React.useState()
-	}
-	const customerStates = {
-		id: React.useState(),
+		expiration: React.useState(''),
 		cnpj: React.useState(),
-		state: React.useState(""),
-		contractId: React.useState()
+		insurancePolicyId: React.useState(),
+		customerId: React.useState()
 	}
 	
 	employeeInputElements.forEach((element, index) => {
-		const currentState = Object.values(employeeStates)[index];
+		const currentState = Object.values(contractStates)[index];
 
 		connectStateElement(element, currentState[0], currentState[1]);
 	});
-
-	customerInputElements.forEach((element, index) => {
-		const currentState = Object.values(customerStates)[index];
-		connectStateElement(element, currentState[0], currentState[1]);
-	});
-	
-	const statesToChange = (props.tabSelected === 0) ? employeeStates : customerStates;
 	
 	const [isDataLoading, setIsDataLoading] = React.useState(true);
 	const [didRequest, setDidRequest] = React.useState(false);
@@ -219,10 +152,8 @@ const EditDialog = (props) => { /*ADD ControllerBrowser.getQueryParam('id')*/
 			console.log("Data gotten");
 			console.log(respBody);
 			
-			
-			
-			Object.keys(statesToChange).forEach((key) =>{
-				statesToChange[key][1](respBody[key]);
+			Object.keys(contractStates).forEach((key) =>{
+				contractStates[key][1](respBody[key]);
 			});
 			
 			setIsDataLoading(false);
@@ -231,17 +162,11 @@ const EditDialog = (props) => { /*ADD ControllerBrowser.getQueryParam('id')*/
 		const onGetError = (status, message) => {
 			console.log(`Erro ${status} - ${message}`);
 		}
-		if(props.tabSelected === 0){
-			console.log(
-				ControllerEmployees.getOne(registryId, onGetSuccess, onGetError)
-			);
-		}else{
-			console.log(
-				ControllerCustomers.getOne(registryId, onGetSuccess, onGetError)
-			);
-		}
-		
-		
+
+		console.log(
+			ControllerContracts.getOne(registryId, onGetSuccess, onGetError)
+		);
+
 		setDidRequest(true);
 	}
 	
@@ -254,27 +179,17 @@ const EditDialog = (props) => { /*ADD ControllerBrowser.getQueryParam('id')*/
 	onClose();
 	props.onLoading();
 	
-    const stateValues = getStateValues(statesToChange);
+    const stateValues = getStateValues(contractStates);
 	
-	if(props.tabSelected === 0){
-	  console.log(
-		ControllerEmployees.update(stateValues, props.onEditSuccess, props.onEditError)
-	  );
-	}
-
-	else{
-	  console.log(
-		ControllerCustomers.update(stateValues, props.onEditSuccess, props.onEditError)
-		);
-	}
+	console.log(
+		ControllerContracts.update(stateValues, props.onEditSuccess, props.onEditError)
+	);
   }
-
-  const editInputElements = (props.tabSelected === 0 ? employeeInputElements : customerInputElements);
 
   return(
 	<FormDialog 
 		{...props} 
-		inputElements={(isDataLoading) ? [] : editInputElements}
+		inputElements={(isDataLoading) ? [] : employeeInputElements}
 		onClose={onClose}
 		onSubmit={onSubmit}
 	>
@@ -306,15 +221,9 @@ const DeleteDialog = (props) => {
 		const onGetError = (status, message) => {
 			console.log(`Erro ${status} - ${message}`);
 		}
-		if(props.tabSelected === 0){
-			console.log(
-				ControllerEmployees.getOne(registryId, onGetSuccess, onGetError)
-			);
-		}else{
-			console.log(
-				ControllerCustomers.getOne(registryId, onGetSuccess, onGetError)
-			);
-		}
+		console.log(
+			ControllerContracts.getOne(registryId, onGetSuccess, onGetError)
+		);
 		
 		setDidRequest(true);
 	}
@@ -327,25 +236,17 @@ const DeleteDialog = (props) => {
 	const onConfirm = () => {
 		onClose();
 		props.onLoading();
-		
-		if(props.tabSelected === 0){
-		  console.log(
-			ControllerEmployees.remove(registryData.id, props.onRemoveSuccess, props.onRemoveError)
-		  );
-		}
 
-		else{
-		  console.log(
-			ControllerCustomers.remove(registryData.id, props.onRemoveSuccess, props.onRemoveError)
-			);
-		}
+		console.log(
+			ControllerContracts.remove(registryData.id, props.onRemoveSuccess, props.onRemoveError)
+	    );
 	}
 	
 	return(
 		 <ConfirmDialog {...props} onClose={onClose} onConfirm={onConfirm}>
 			{isDataLoading 
 				? "Confirmando dados..."
-				: `Tem certeza que deseja excluir o registro de '${(props.tabSelected === 0) ? registryData.firstName : registryData.cnpj}' (id ${registryData.id})? Essa ação não pode ser desfeita.`
+				: `Tem certeza que deseja excluir este contrato? Esta ação não pode ser desfeita.`
 			}
 		 </ConfirmDialog>
 	);
@@ -354,29 +255,7 @@ const DeleteDialog = (props) => {
 // TODO  shouldremove, this demon't need to reset the theme.
 const defaultTheme = createTheme();
 
-const headers = [
-  { id: "id", label: "Id" },
-  { id: "nome", label: "Nome" },
-  { id: "email", label: "E-mail" },
-  { id: "telefone", label: "Telefone" },
-  { id: "tipo", label: "Tipo" }
-];
-
-const data = [
-  [1, "João", "joaoa@email.com", "(12)8651-2354", "Gestor"],
-  [2, "Antônia", "oaoa@email.com", "(11)98651-2354", "Funcionário"],
-  [3, "Paulo", "orda@email.com", "(11)94451-2354", "Funcionário"],
-  [4, "João", "joaoa@email.com", "(12)8651-2354", "Gestor"],
-  [5, "Antônia", "oaoa@email.com", "(11)98651-2354", "Funcionário"],
-  [6, "Paulo", "orda@email.com", "(11)94451-2354", "Funcionário"],
-  [7, "João", "joaoa@email.com", "(12)8651-2354", "Gestor"],
-  [8, "Antônia", "oaoa@email.com", "(11)98651-2354", "Funcionário"],
-  [9, "Paulo", "orda@email.com", "(11)94451-2354", "Funcionário"]
-];
-
-const organizedData = organizeData(data, headers);
-
-export default class Dashboard extends React.Component {
+export default class Contracts extends React.Component {
 	constructor(){
 		super();
 		this.state = {
@@ -422,10 +301,8 @@ export default class Dashboard extends React.Component {
 			console.log(`Error ${status} - ${message}`);
 		}
 		
-		if(this.state.currentTableIndex === 0)
-			ControllerEmployees.getAll('firstName', 'desc', onSuccess, onError);
-		else
-			ControllerCustomers.getAll('cnpj', 'desc', onSuccess, onError);
+		ControllerContracts.getAll('id', 'asc', onSuccess, onError);
+			
 	}
 	
 	toggleFilterDialog = () => {
@@ -465,14 +342,11 @@ export default class Dashboard extends React.Component {
 			console.log(`Error ${status} - ${message}`);
 		}
 		
-		if(newTableIndex === 0)
-			ControllerEmployees.getAll('firstName', 'desc', onSuccess, onError);
-		else
-			ControllerCustomers.getAll('cnpj', 'desc', onSuccess, onError);
+		ControllerContracts.getAll('id', 'asc', onSuccess, onError);		
 	}
 	
 	handleSubmitSuccess = (respBody) => {
-		const message = `${this.state.currentTableIndex === 0 ? `Funcionário ${respBody.firstName}` : `Cliente ${respBody.cnpj}`} cadastrado com sucesso!`
+		const message = `Contrato nº ${respBody.id} cadastrado com sucesso!`
 		console.log(message);
 		
 		this.showAlertPopUp("Cadastro concluído!", message, "success");
@@ -487,7 +361,7 @@ export default class Dashboard extends React.Component {
 	}
 	
 	handleEditSuccess = (respBody) => {
-		const message = `${this.state.currentTableIndex === 0 ? `Funcionário '${respBody.firstName}'` : `Cliente '${respBody.cnpj}'`} editado com sucesso!`
+		const message = `Contrato nº ${respBody.id} editado com sucesso!`
 		console.log(message);
 		
 		this.showAlertPopUp("Registro alterado!", message, "success");
@@ -503,7 +377,7 @@ export default class Dashboard extends React.Component {
 	
 	handleRemoveSuccess = (respBody) => {
 		console.log("Registro excluído com sucesso!");
-		this.showAlertPopUp("Registro excluído", "Agora o registro não consta mais no banco de dados.", "success");
+		this.showAlertPopUp("Contrato excluído", "Agora o registro não consta mais no banco de dados.", "success");
 		
 		this.setState({isLoadingData: true});
 		this.getAllRegistries();
@@ -541,40 +415,22 @@ export default class Dashboard extends React.Component {
 			}
 			];
 			
-		const employeesHeaders = [
+		const contractHeaders = [
 		  { id: "id", label: "Id" },
-		  { id: "firstName", label: "Nome" },
-		  { id: "lastName", label: "Sobrenome" },
-		  { id: "e-mail", label: "E-mail" },
-		];
-		
-		const customersHeaders = [
-		  { id: "id", label: "Id" },
-		  { id: "cnpj", label: "CNPJ" },
-		  { id: "state", label: "Estado" },
-		  { id: "contractId", label: "Contrato" },
+		  { id: "expiration", label: "Dt. Expiração" },
+		  { id: "cnpj", label: "CNPJ Cliente" },
+		  { id: "insurancePolicyId", label: "Nº Apólice" },
+		  { id: "customerId", label: "Id Cliente" },
 		];
 
 		const TabViewProps = {
-		  labels: ["Funcionários", "Clientes"],
+		  labels: ["Contratos"],
 		  employeesTable: (
 			<DefaultTable
 				isLoadingData={this.state.isLoadingData}
 				numberOfRows={this.state.visibleData.length}
 				organizedData={this.state.visibleData}
-				headers={employeesHeaders}
-				onToggleFilterDialog={this.toggleFilterDialog}
-				onToggleSubmitDialog={this.toggleSubmitDialog}
-				toggleDeleteDialog={this.toggleDeleteDialog}
-				rowOptions={rowOptions}
-			/>
-		  ),
-		  customersTable: (
-			<DefaultTable
-				isLoadingData={this.state.isLoadingData}
-				numberOfRows={this.state.visibleData.length}
-				organizedData={this.state.visibleData}
-				headers={customersHeaders}
+				headers={contractHeaders}
 				onToggleFilterDialog={this.toggleFilterDialog}
 				onToggleSubmitDialog={this.toggleSubmitDialog}
 				toggleDeleteDialog={this.toggleDeleteDialog}
@@ -620,10 +476,10 @@ export default class Dashboard extends React.Component {
 					  onClose={this.toggleFilterDialog}
 					  onLoading={() => this.showAlertPopUp("Carregando", "Processando solicitação...", "info")}
 					  onSubmit={null}
-					  title="Filtar - Usuários"
+					  title="Filtar - Contratos"
 					  btnSubmitName="Filtrar"
 					>
-					  Filtre os registros dos usuários
+					  Filtre os registros dos contratos
 					</FilterDialog>
 					<SubmitDialog
 					  isOpen={this.state.isSubmitDialogOpen}
@@ -631,11 +487,11 @@ export default class Dashboard extends React.Component {
 					  onLoading={() => this.showAlertPopUp("Carregando", "Processando solicitação...", "info")}
 					  onSubmitSuccess={this.handleSubmitSuccess}
 					  onSubmitError={this.handleSubmitError}
-					  title="Cadastrar - Usuários"
+					  title="Cadastrar - Contratos"
 					  btnSubmitName="Cadastrar"
 					  tabSelected={this.state.currentTableIndex}
 					>
-					  Insira as informações de seu novo usuário
+					  Insira as informações de um novo contrato assinado
 					</SubmitDialog>
 					<EditDialog
 					  isOpen={this.state.isEditDialogOpen}
@@ -648,13 +504,12 @@ export default class Dashboard extends React.Component {
 					  onLoading={() => this.showAlertPopUp("Carregando", "Processando solicitação...", "info")}
 					  onEditSuccess={this.handleEditSuccess}
 					  onEditError={this.handleEditError}
-					  title="Editar - Usuários"
+					  title="Editar - Contratos"
 					  btnSubmitName="Editar"
 					  inputValues={null}
 					  tabSelected={this.state.currentTableIndex}
 					>
-					  Edite as informações do usuário (Atenção: apenas um usuário pode
-					  alterar a própria senha)
+					  Edite as informações cadastrais do contrato
 					</EditDialog>
 					<DeleteDialog
 					  isOpen={this.state.isDeleteDialogOpen}
@@ -668,7 +523,7 @@ export default class Dashboard extends React.Component {
 					  onRemoveSuccess={this.handleRemoveSuccess}
 					  onRemoveError={this.handleRemoveError}
 					  tabSelected={this.state.currentTableIndex}
-					  title="Excluir - Usuário"
+					  title="Excluir - Contratos"
 					  btnConfirmName="Excluir"
 					  nomeUsuario="João"
 					/>

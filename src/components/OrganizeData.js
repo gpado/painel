@@ -7,6 +7,8 @@ const organizeData = (rows, headers) => {
     });
     organizedData.push(organizedRow);
   });
+  
+  console.log(organizedData);
 
   return organizedData;
 };

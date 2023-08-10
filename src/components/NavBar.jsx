@@ -1,4 +1,6 @@
 import React from "react";
+import { Link } from "react-router-dom";
+
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -12,7 +14,10 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 
-const pages = ["Dashboard", "Usuários", "Chat-Clientes"];
+const pages = [
+	["users", "Usuários", "/usuarios"],
+	["contracts", "Contratos", "/contratos"]
+];
 const settings = ["Perfil", "Sair"];
 
 const NavMenu = () => {
@@ -56,8 +61,10 @@ const NavMenu = () => {
         }}
       >
         {pages.map((page) => (
-          <MenuItem key={page} onClick={handleCloseNavMenu}>
-            <Typography textAlign="center">{page}</Typography>
+          <MenuItem key={`menuItem-${page[0]}`} onClick={handleCloseNavMenu}>
+			<Link to={page[2]}>
+				<Typography textAlign="center">{page[1]}</Typography>
+			</Link>
           </MenuItem>
         ))}
       </Menu>
@@ -78,7 +85,7 @@ const UserMenu = () => {
 
   return (
     <Box sx={{ flexGrow: 0 }}>
-      <Tooltip title="Open settings">
+      <Tooltip title="Configurações">
         <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
           <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
         </IconButton>
@@ -138,12 +145,14 @@ function NavBar() {
 
           <Box sx={{ flexGrow: 0, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
-              <Button
-                key={page}
+			<Link to={page[2]}>
+				<Button
+                key={`menuItem-${page[0]}`}
                 sx={{ my: 2, color: "white", display: "block" }}
-              >
-                {page}
-              </Button>
+				>
+					{page[1]}
+				</Button>
+			</Link>
             ))}
           </Box>
 

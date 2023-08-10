@@ -81,8 +81,7 @@ function EnhancedTableHead({
           />
         </TableCell>
         {headers.map(
-          (header) =>
-            header !== headers[0] && (
+          (header) =>(
               <TableCell
                 key={header.id}
                 sortDirection={orderBy === header.id ? order : false}
@@ -162,7 +161,7 @@ function EnhancedTableToolbar({
 
           <Tooltip>
             <Button variant="contained" onClick={onToggleSubmitDialog}>
-              Cadastrar
+				Cadastrar
             </Button>
           </Tooltip>
         </>
@@ -171,7 +170,7 @@ function EnhancedTableToolbar({
   );
 }
 
-const RowOptionsMenu = ({ options }) => {
+const RowOptionsMenu = ({ options, registryId }) => {
   const [anchorElRowOptions, setAnchorElRowOptions] = React.useState(null);
 
   const handleToggleRowOptionsMenu = (event) => {
@@ -204,7 +203,7 @@ const RowOptionsMenu = ({ options }) => {
         onClose={handleToggleRowOptionsMenu}
       >
         {options.map((option) => (
-          <MenuItem key={option.id} onClick={option.action}>
+          <MenuItem key={option.id} onClick={() => option.onClick(registryId)}>
             <Typography textAlign="left">{option.label}</Typography>
           </MenuItem>
         ))}
@@ -214,6 +213,7 @@ const RowOptionsMenu = ({ options }) => {
 };
 
 export default function TesteTable({
+  isLoadingData,
   selectRow,
   organizedData,
   headers,
@@ -225,7 +225,7 @@ export default function TesteTable({
   rowOptions
 }) {
   const [order, setOrder] = React.useState("asc");
-  const [orderBy, setOrderBy] = React.useState("nome");
+  const [orderBy, setOrderBy] = React.useState(headers[0].id);
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -315,9 +315,32 @@ export default function TesteTable({
               headers={headers}
             />
             <TableBody>
-              {visibleRows.map((row, index) => {
+              {isLoadingData 
+				? (
+					<TableRow>
+					  <TableCell colSpan={headers.length + 2} align="center">
+						Carregando informações...
+					  </TableCell>
+					</TableRow>
+				  )
+				: visibleRows.map((row, index) => {
                 const isItemSelected = isSelected(row.id);
                 const labelId = `enhanced-table-checkboxa-${index}`;
+				const rowCells = Object.values(row).map((value, index) => {
+					if(index === 0)
+						return (
+							<TableCell
+							  component="th"
+							  id={labelId}
+							  scope="row"
+							>
+								{value}
+							</TableCell>
+						);
+					else
+						return (<TableCell>{value}</TableCell>);
+				})
+				
 
                 return (
                   <TableRow
@@ -338,29 +361,26 @@ export default function TesteTable({
                         }}
                       />
                     </TableCell>
-                    <TableCell
-                      component="th"
-                      id={labelId}
-                      scope="row"
-                      padding="none"
-                    >
-                      {row.nome}
-                    </TableCell>
-                    <TableCell>{row.email}</TableCell>
-                    <TableCell>{row.telefone}</TableCell>
-                    <TableCell>{row.tipo}</TableCell>
+                    {rowCells}
                     <TableCell align="center">
-                      <RowOptionsMenu options={rowOptions} />
+                      <RowOptionsMenu options={rowOptions} registryId={row.id} />
                     </TableCell>
                   </TableRow>
                 );
               })}
               {emptyRows > 0 && (
                 <TableRow>
-                  <TableCell colSpan={6} />
+                  <TableCell colSpan={headers.length + 2} />
                 </TableRow>
               )}
-            </TableBody>
+			  {(organizedData.length === 0 && !isLoadingData) && (
+				<TableRow>
+                  <TableCell colSpan={headers.length + 2} align="center" >
+					Nenhum registro encontrado. <a href="#">Cadastrar novos dados</a>
+				  </TableCell>
+                </TableRow>
+			  )}
+			</TableBody>
           </Table>
         </TableContainer>
         <TablePagination

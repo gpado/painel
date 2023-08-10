@@ -4,11 +4,23 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
-export default function DefaultDatePicker({ label, id }) {
+export default function DefaultDatePicker({ 
+	label, 
+	id, 
+	onChange, 
+	value, 
+	margin
+}) {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <DemoContainer components={["DatePicker"]}>
-        <DatePicker label={label} id={id} />
+      <DemoContainer components={["DatePicker"]} >
+        <DatePicker 
+			label={label} 
+			id={id} 
+			onChange={onChange} 
+			value={value}
+			
+		/>
       </DemoContainer>
     </LocalizationProvider>
   );
