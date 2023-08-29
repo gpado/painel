@@ -16,7 +16,8 @@ import MenuItem from "@mui/material/MenuItem";
 
 const pages = [
 	["users", "Usuários", "/usuarios"],
-	["contracts", "Contratos", "/contratos"]
+	["contracts", "Contratos", "/contratos"],
+  ["chat", "Chat", "/chat"] 
 ];
 const settings = ["Perfil", "Sair"];
 

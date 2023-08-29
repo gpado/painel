@@ -6,6 +6,8 @@ import SecuredPage from "./pages/Securedpage";
 // import PrivateRoute from "./helpers/PrivateRoute";
 import ConsultUsers from "./pages/ConsultUsers";
 import Contracts from "./pages/Contracts";
+import Chat from "./pages/Chat.jsx";
+
 
 const TestePage = () => (
     <div>
@@ -20,6 +22,7 @@ const routes = [
   { path: "/secured", element: <SecuredPage />, isPrivate: true },
   { path: "/usuarios", element: <ConsultUsers />, isPrivate: true },
   { path: "/contratos", element: <Contracts />, isPrivate: true },
+  { path: "/chat", element: <Chat />, isPrivate: true },
 ];
 
 const AppRouter = () => {
