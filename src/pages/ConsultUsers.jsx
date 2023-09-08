@@ -362,20 +362,6 @@ const headers = [
   { id: "tipo", label: "Tipo" }
 ];
 
-const data = [
-  [1, "João", "joaoa@email.com", "(12)8651-2354", "Gestor"],
-  [2, "Antônia", "oaoa@email.com", "(11)98651-2354", "Funcionário"],
-  [3, "Paulo", "orda@email.com", "(11)94451-2354", "Funcionário"],
-  [4, "João", "joaoa@email.com", "(12)8651-2354", "Gestor"],
-  [5, "Antônia", "oaoa@email.com", "(11)98651-2354", "Funcionário"],
-  [6, "Paulo", "orda@email.com", "(11)94451-2354", "Funcionário"],
-  [7, "João", "joaoa@email.com", "(12)8651-2354", "Gestor"],
-  [8, "Antônia", "oaoa@email.com", "(11)98651-2354", "Funcionário"],
-  [9, "Paulo", "orda@email.com", "(11)94451-2354", "Funcionário"]
-];
-
-const organizedData = organizeData(data, headers);
-
 export default class Dashboard extends React.Component {
 	constructor(){
 		super();

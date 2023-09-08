@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useKeycloak } from "@react-keycloak/web";
 
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -18,7 +19,7 @@ const pages = [
 	["users", "Usuários", "/usuarios"],
 	["contracts", "Contratos", "/contratos"]
 ];
-const settings = ["Perfil", "Sair"];
+const settings = ["Sair"];
 
 const NavMenu = () => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -74,6 +75,7 @@ const NavMenu = () => {
 
 const UserMenu = () => {
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const { keycloak } = useKeycloak();
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -82,6 +84,11 @@ const UserMenu = () => {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+  
+  const handleLogout = () => {
+	  handleCloseUserMenu();
+	  keycloak.logout({redirectUri: `${window.location.origin}/`});
+  }
 
   return (
     <Box sx={{ flexGrow: 0 }}>
@@ -107,7 +114,7 @@ const UserMenu = () => {
         onClose={handleCloseUserMenu}
       >
         {settings.map((setting) => (
-          <MenuItem key={setting} onClick={handleCloseUserMenu}>
+          <MenuItem key={setting} onClick={handleLogout}>
             <Typography textAlign="center">{setting}</Typography>
           </MenuItem>
         ))}

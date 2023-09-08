@@ -11,7 +11,9 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from "react-router-dom";
+import { useKeycloak } from "@react-keycloak/web";
 
+import Authentication from "../utils/Authentication";
 
 function DireitosAutorais(props) {
   return (
@@ -29,19 +31,37 @@ function DireitosAutorais(props) {
 const temaPadrao = createTheme();
 
 export default function Entrar() {
-  let navigate = useNavigate();
+	let navigate = useNavigate();
+	const { keycloak } = useKeycloak();
+	
+	const handleSubmit = (event) => {
+		event.preventDefault();
+		const data = new FormData(event.currentTarget);
+		
+		const onSubmitSuccess = (responseBody) => {
+		  console.log(responseBody);
+		  
+		  keycloak.login({redirectUri: `${window.location.origin}/usuarios`, prompt: 'none'});
+		}
 
+		const onSubmitError = (status, message, fullError) => {
+		  console.log("Error when trying to login the user.\n");
+		  console.log(`${status}: ${message}`);
+		  console.log(fullError);
+		}
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('senha'),
-    });
-
-    navigate("/dashboard");
-  };
+		console.log({
+		  email: data.get('email'),
+		  password: data.get('senha'),
+		});
+		
+		Authentication.accessSystem(
+		  data.get('email'), 
+		  data.get('senha'),
+		  onSubmitSuccess,
+		  onSubmitError
+		);
+	};
 
   return (
     <ThemeProvider theme={temaPadrao}>
