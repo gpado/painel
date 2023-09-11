@@ -33,7 +33,9 @@ GoDigital Code Painel é a parte frontend de um sistema de gestão empresarial p
     - Manter os registros de funcionários
     - Manter os registros de contratos firmados
     - Manter os registros de clientes
+
 <br>
+
 - O sistema faz:
     - Requisições à rest API para controlar os dados do sistema
     - Redirecionamentos ao sistema protegido do keycloak para:
